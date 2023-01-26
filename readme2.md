@@ -14,6 +14,13 @@ Mac:
 - source ~/.ve/vercelo/bin/activate
 - (to deactivate) : deactivate
 
+(or)
+ - in pip of a specific Python version (Mac):
+- - python3.8 -m venv env
+- - source env/bin/activate
+- - jupyter notebook
+- - deactivate
+
 Windows:
 - virtualenv ~/.ve/vercelo
 - ~\.ve\vercelo\bin\activate

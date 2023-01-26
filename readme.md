@@ -40,3 +40,6 @@ This site will be disabled on Sunday 23 April 2023
 Paying users' sites stay up forever without any need to log in to keep them running.
 
 ---
+
+- OpenCV issue in Mac
+- matplotlib (rendered properly in local, but error for URL in pythonanywhere)

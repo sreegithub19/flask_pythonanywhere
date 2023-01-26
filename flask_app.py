@@ -2,19 +2,26 @@
 # A very simple Flask Hello World app for you to get started with...
 
 from flask import Flask
+# import pyqrcode # pip install PyQRCode
 import numpy as np
+from skimage import io # pip install scikit-image
+# import urllib
+# import urllib.request
 import pandas as pd, seaborn as sns, matplotlib.pyplot as plt
-#from IPython.display import display,HTML
+from IPython.display import display,HTML
 import base64
+from PIL import Image
+import requests
 from io import BytesIO
 from flask import Response
 from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 from matplotlib.figure import Figure
 #import sys # to access the system
-#import cv2
+import cv2   # pip install opencv-python
 import os
+from sklearn import datasets #  pip install scikit-learn
 
-app = Flask(__name__, static_url_path='/static')
+app = Flask(__name__)
 
 # numpy (rendered properly)
 @app.route('/')
@@ -30,7 +37,7 @@ def hello_world():
     b transpose is {},
     b transpose is {},
     os.getcwd() is {},
-    os.listdir() is {}
+    os.listdir() is {},
     '''.format(a,
     a.transpose(),
     b,
@@ -43,7 +50,7 @@ def hello_world():
     )
 
 
- # matplotlib (rendered properly)
+ # matplotlib (rendered properly in local, but error for URL)
 @app.route('/matplotlib')
 def hello_word():
     # Generate the figure **without using pyplot**.
@@ -66,6 +73,14 @@ def hello_word():
     data1 = base64.b64encode(buf.getbuffer()).decode("ascii")
 
 
+    # https://stackoverflow.com/questions/7391945/how-do-i-read-image-data-from-a-url
+    response = requests.get("https://www.pyimagesearch.com/wp-content/uploads/2015/01/google_logo.png")
+    data2 = Image.open(BytesIO(response.content))
+
+    buffered = BytesIO()
+    data2.save(buffered, format="png")
+    data2 = base64.b64encode(buffered.getbuffer()).decode("ascii")
+
 
 
     return f'''
@@ -73,6 +88,7 @@ def hello_word():
     <img src='data:image/png;base64,{data}'/>
     <img src='data:image/jpg;base64,{data1}'/>
     <img src='data:image/png;base64,{data1}'/>
+    <img src='data:image/png;base64,{data2}'/>
     '''
 
 
@@ -93,25 +109,59 @@ def pandas():
         df,
     )
 
-IMG_FOLDER = os.path.join('static', 'IMG')
-app.config['UPLOAD_FOLDER'] = IMG_FOLDER
-Sheep = os.path.join(app.config['UPLOAD_FOLDER'], 'Sheep.png')
+# IMG_FOLDER = os.path.join('static', 'IMG')
+# app.config['UPLOAD_FOLDER'] = IMG_FOLDER
+# Sheep = os.path.join(app.config['UPLOAD_FOLDER'], 'Sheep.png')
 
-# opencv (rendered properly)
+# opencv (not rendered properly)
 @app.route('/opencv')
 def opencv():
-    img = cv2.imread("geeksforgeeks.png", cv2.IMREAD_COLOR)
- 
-    # Creating GUI window to display an image on screen
-    # first Parameter is windows title (should be in string format)
-    # Second Parameter is image array
-    cv2.imshow("image", img)
+    # url = 'https://media.geeksforgeeks.org/wp-content/uploads/20211003151646/geeks14.png'
+
+
+    # with urllib.request.urlopen(url) as resp:
+
+    #     # read image as an numpy array
+    #     image = np.asarray(bytearray(resp.read()), dtype="uint8")
+
+    #     # use imdecode function
+    #     image = cv2.imdecode(image, cv2.IMREAD_COLOR)
+
+    #     # display image
+    #     cv2.imwrite("result.jpg", image)
+    #     image = image.astype(np.uint8)
+
+    #     cv2.imshow("image", image)
+
+    #     # waits for user to press any key
+    #     # (this is necessary to avoid Python kernel form crashing)
+    #     cv2.waitKey(0)
+
+    #     # closing all open windows
+    #     cv2.destroyAllWindows()
+    image1 = cv.imread('image1.jpg')
+    image2 = cv.imread('image2.jpg')
+    plt.subplot(1, 2, 1)
+    plt.imshow(image1)
+    plt.subplot(1, 2, 2)
+    plt.imshow(image2)
 
 
 
+    return ''
 
+@app.route('/sklearn')
+def sklearn():
 
-
+    # Load data
+    iris= datasets.load_iris()
+    # Print shape of data to confirm data is loaded
+    #print(iris.data.shape)
+    return f'''
+    <p>{
+        iris.data.shape
+        }</p>
+    '''
 
 
 
